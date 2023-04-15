@@ -73,17 +73,59 @@ const getHighestCart = async () => {
   return { value: highestValue, fullName };
 };
 
+const theFurthestAway = async () => {
+  const users = await getUsers();
+  const locations = {};
+  users.forEach(
+    (user) =>
+      (locations[user.id] = {
+        lat: user.address.geolocation.lat,
+        lng: user.address.geolocation.long,
+      })
+  );
+  let maxDistance = 0;
+  let maxDistanceUsers = null;
+
+  for (let i = 0; i < users.length; i++) {
+    for (let j = 0; j < users.length; j++) {
+      const user1 = users[i];
+      const user2 = users[j];
+
+      const distance = Math.sqrt(
+        Math.pow(locations[user1.id].lat - locations[user2.id].lat, 2) +
+          Math.pow(locations[user1.id].lng - locations[user2.id].lng, 2)
+      );
+
+      if (distance > maxDistance) {
+        maxDistance = distance;
+        maxDistanceUsers = [
+          { fullName: `${user1.name.firstname} ${user1.name.lastname}` },
+          { fullName: `${user2.name.firstname} ${user2.name.lastname}` },
+        ];
+      }
+    }
+  }
+
+  return [maxDistance, maxDistanceUsers];
+};
+
 const main = async () => {
+  //all categories
   const categories = await getAllCategories();
   console.log('Categories: ', categories);
 
+  //highest value in cart
   const carts = await getHighestCart();
 
   if (carts === null) {
-    console.log('No carts found');
+    console.log('\n\nNo carts found');
   } else {
-    console.log('Carts: ', carts);
+    console.log('\n\nCarts: ', carts);
   }
+
+  //the furthest away
+  const maxDistance = await theFurthestAway();
+  console.log('\n\nThe furthest away: ', maxDistance);
 };
 
 main();
