@@ -1,7 +1,5 @@
 const axios = require('axios');
 
-let users, carts, products;
-
 const getUsers = async () => {
   const response = await axios.get('https://fakestoreapi.com/users');
   return response.data;
@@ -129,3 +127,14 @@ const main = async () => {
 };
 
 main();
+
+module.exports = {
+  getUsers,
+  getUserById,
+  getCarts,
+  getProducts,
+  getProductById,
+  getAllCategories,
+  getHighestCart,
+  theFurthestAway,
+};
